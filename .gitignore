@@ -1,0 +1,28 @@
+# Environment & secrets
+.env
+*.env
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Databases (from persistence work — don't commit local DB files)
+*.db
+*.sqlite3
+
+# Vector stores
+faiss_db/
+faiss_index/
+
+# Uploaded files
+uploaded_docs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+EOF
