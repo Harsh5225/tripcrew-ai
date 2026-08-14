@@ -62,7 +62,25 @@ def search_hotels(location:str)->list[dict]:
     print("Error fetching hotels")
     return [{"error": "Could not fetch hotel data at this time."}]
 
-
+@tool
+def search_activities(location: str) -> str:
+    """
+    Searches the web for top tourist attractions, activities, and restaurants in a specific location.
+    Args:
+        location (str): The city or destination name (e.g., 'Goa, India').
+    """
+    print(f" Tool Execution: Searching web for activities in {location}...")
+    
+    tavily_tool = TavilySearch(max_results=3, topic="general")
+    
+    try:
+        query = f"top things to do, tourist attractions, and best restaurants in {location}"
+        results = tavily_tool.invoke({"query": query})
+        # We return it as a string so it's easy to feed into our final prompt
+        return str(results)
+    except Exception as e:
+        print(f" Error fetching activities: {e}")
+        return "Could not fetch activity data. Rely on general knowledge."
 
 # Update the standalone test block at the very bottom of the file
 if __name__ == "__main__":

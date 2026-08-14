@@ -3,7 +3,7 @@ import json
 from dotenv import load_dotenv
 from langchain_groq import ChatGroq
 from langchain_core.messages import HumanMessage, SystemMessage
-from tools import search_flights, search_hotels
+from tools import search_flights, search_hotels, search_activities
 from langgraph.graph import StateGraph, START,END
 from state import TravelState
 from checkpointer import get_checkpointer
@@ -61,11 +61,45 @@ def hotel_agent(state: TravelState):
 def itinerary_agent(state: TravelState):
     print("📍 Itinerary agent running...")
     # Itinerary agent needs both flight and hotel info to build the plan
-    return {"itinerary": "Day 1: Fly in. Check into hotel. Day 2: Explore."}
+    sys_msg_research = SystemMessage(content="You are a travel researcher. Extract the destination city from the user query and use the search_activities tool. Do not output conversational text, ONLY use the tool.")
+
+    research_llm = llm.bind_tools([search_activities], tool_choice="any")
+    research_response = research_llm.invoke([sys_msg_research, HumanMessage(content=state["user_query"])])
+    
+    activities_data = ""
+    if research_response.tool_calls:
+        for tool_call in research_response.tool_calls:
+            print(f"   Executing tool: {tool_call['name']} with args: {tool_call['args']}")
+            activities_data = search_activities.invoke(tool_call["args"])
+
+    print("📝 Drafting the day-by-day itinerary...")
+    
+    sys_msg_writer = SystemMessage(content="You are an expert, enthusiastic travel planner. Create a detailed day-by-day itinerary using the provided flights, hotels, and activities. Format the response beautifully using Markdown headings and bullet points.")
+
+    drafting_prompt = f"""
+    User Request: {state['user_query']}
+    
+    [AVAILABLE FLIGHTS]
+    {state['flight_results']}
+    
+    [HOTEL OPTIONS]
+    {state['hotel_results']}
+    
+    [THINGS TO DO]
+    {activities_data}
+    
+    Please write a comprehensive itinerary. Recommend a specific hotel from the options, include flight times, and plan out the daily activities.
+    """
+    final_response = llm.invoke([sys_msg_writer, HumanMessage(content=drafting_prompt)])
+    
+    return {"itinerary": final_response.content}
 
 def final_response_agent(state: TravelState):
     print("💬 Final response agent running...")
-    return {"final_response": f"Trip plan ready for: {state['user_query']}"}
+    
+    final_text = state.get("itinerary", "No itinerary was generated.")
+    
+    return {"final_response": final_text}
 
 graph=StateGraph(TravelState)
 
