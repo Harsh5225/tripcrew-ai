@@ -12,6 +12,12 @@ app = FastAPI(title="TripCrew AI")
 # Tell FastAPI where to find our HTML files
 templates = Jinja2Templates(directory="templates")
 
+# Add this lightweight endpoint to keep Render awake
+@app.get("/health")
+async def health_check():
+    """A simple ping endpoint for uptime monitors."""
+    return {"status": "active", "message": "TripCrew AI is awake!"}
+
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
     """Renders the home page with the search box."""
