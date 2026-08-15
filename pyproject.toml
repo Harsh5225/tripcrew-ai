@@ -14,6 +14,7 @@ dependencies = [
     "langchain-tavily>=0.2.18",
     "langgraph>=1.2.11",
     "langgraph-checkpoint-postgres>=3.1.2",
+    "mcp[cli]>=2.0.0",
     "psycopg-pool>=3.3.1",
     "psycopg[binary]>=3.3.4",
     "pycountry>=26.2.16",
