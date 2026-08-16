@@ -2,6 +2,8 @@
 
 ![Flow Architecture](https://github.com/Harsh5225/tripcrew-ai/blob/main/Flow_Architecture.png?raw=true)
 
+![MCP Ecosystem](https://github.com/Harsh5225/tripcrew-ai/blob/main/MCP%20Ecosystem%20User%20Query.png?raw=true)
+
 A multi-agent travel planning system built with LangGraph. Turns a natural-language
 trip request into flight suggestions, hotel options, and a day-by-day itinerary —
 coordinated across four specialized agents sharing a single persistent state.
