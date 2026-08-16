@@ -1,14 +1,14 @@
 import os
 import requests
 from dotenv import load_dotenv
-from mcp.server.mcpserver import MCPServer
+from mcp.server.fastmcp import FastMCP
 from tavily import TavilyClient
 
 # Load environment variables
 load_dotenv()
 
 # Initialize the MCP Server
-mcp = MCPServer("TripCrew Server")
+mcp = FastMCP("TripCrew Server")
 
 @mcp.tool()
 def search_flights(destination_iata: str) -> list:
